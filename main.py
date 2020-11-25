@@ -56,7 +56,6 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         pg.display.flip()
 
-        pg.display.flip()
 
 
     def draw_grid(self):
