@@ -3,6 +3,7 @@ import sys
 from os import path
 from settings import *
 from sprites import *
+from tilemap import *
 
 
 class Game:
@@ -16,20 +17,19 @@ class Game:
 
     def load_data(self):
         game_folder = path.dirname(__file__)
-        self.map_data = []
-        with open(path.join(game_folder, 'map.txt') , 'rt') as f:
-            for line in f:
-                self.map_data.append(line)
+        self.map = Map(path.join(game_folder, 'map2.txt'))
 
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-        for row, tiles in enumerate(self.map_data):
+        for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile =='1':
                     Wall(self, col, row)
                 if tile =='P':
                     self.player = Player(self, col, row)
+        self.camera = Camera(self.map.width, self.map.height)
+
 
     def run(self):
         self.playing = True
@@ -45,12 +45,19 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
+        self.camera.update(self.player)
+
 
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
-        self.all_sprites.draw(self.screen)
+        #self.all_sprites.draw(self.screen)
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
         pg.display.flip()
+
+        pg.display.flip()
+
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
