@@ -29,6 +29,14 @@ PLAYER_ROT_SPEED = 250
 PLAYER_IMG = 'manOld_gun.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 
+# Gun settings
+BULLET_IMG = 'bullet.png'
+BULLET_SPEED = 500
+BULLET_LIFETIME = 1000
+BULLET_RATE = 150
+KICKBACK = 200
+GUN_SPREAD = 5
+
 # Mob settings
 MOB_IMG = 'zombie1_hold.png'
 MOB_SPEED = 150
