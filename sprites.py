@@ -70,6 +70,8 @@ class Mob(pg.sprite.Sprite):
         self.image = game.mob_img
         self.rect = self.image.get_rect()
         self.pos = vec(x, y) * TILESIZE
+        self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
         self.rect.center = self.pos
         self.rot = 0
 
