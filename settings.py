@@ -38,6 +38,7 @@ BULLET_LIFETIME = 1000
 BULLET_RATE = 150
 KICKBACK = 200
 GUN_SPREAD = 5
+BULLET_DAMAGE = 10
 
 # Mob settings
 MOB_IMG = 'zombie1_hold.png'
