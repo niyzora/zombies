@@ -55,6 +55,7 @@ DETECT_RADIUS = 400
 # Effects
 MUZZLE_FLASHES = ['whitePuff15.png', 'whitePuff16.png', 'whitePuff17.png',
                   'whitePuff18.png']
+SPLAT = 'splat green.png'
 FLASH_DURATION = 50
 
 # Layers
