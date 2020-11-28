@@ -60,7 +60,7 @@ class Game:
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for hit in hits:
             hit.health -= BULLET_DAMAGE
-            hit.vel = vec (0, 0) 
+            hit.vel = vec(0, 0)
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -73,6 +73,8 @@ class Game:
         self.screen.fill(BGCOLOR)
         # self.draw_grid()
         for sprite in self.all_sprites:
+            if isinstance(sprite, Mob):
+                sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         pg.display.flip()
