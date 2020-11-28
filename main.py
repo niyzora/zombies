@@ -35,6 +35,8 @@ class Game:
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'img')
         map_folder = path.join(game_folder, 'maps')
+        snd_folder = path.join(game_folder, 'snd')
+        music_folder = path.join(game_folder, 'music')
         self.map = TiledMap(path.join(map_folder, 'level1.tmx'))
         self.map_img = self.map.make_map()
         self.map.rect = self.map_img.get_rect()
@@ -49,7 +51,10 @@ class Game:
         self.item_images = {}
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(img_folder, ITEM_IMAGES[item])).convert_alpha()
-
+            self.item_images[item] = pg.image.load(path.join(img_folder, ITEM_IMAGES[item])).convert_alpha()
+        # Sound loading
+        pg.mixer.music.load(path.join(music_folder, BG_MUSIC))
+        self.effects_sounds = {}
     def new(self):
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.LayeredUpdates()
