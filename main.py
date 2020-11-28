@@ -46,7 +46,7 @@ class Game:
         self.gun_flashes = []
         for img in MUZZLE_FLASHES:
             self.gun_flashes.append(pg.image.load(path.join(img_folder, img)).convert_alpha())
-        for 
+        for
 
     def new(self):
         # initialize all variables and do all the setup for a new game
