@@ -50,6 +50,7 @@ MOB_HEALTH = 100
 MOB_DAMAGE = 10
 MOB_KNOCKBACK = 20
 AVOID_RADIUS = 50
+DETECT_RADIUS = 400
 
 # Effects
 MUZZLE_FLASHES = ['whitePuff15.png', 'whitePuff16.png', 'whitePuff17.png',
@@ -68,6 +69,8 @@ ITEMS_LAYER = 1
 ITEM_IMAGES = {'health': 'health_pack.png'}
 HEALTH_PACK_AMOUNT = 20
 BOB_RANGE = 15
+BOB_SPEED = 0.4
+
 
 # Sounds
 BG_MUSIC = 'espionage.ogg'
@@ -79,4 +82,4 @@ WEAPON_SOUNDS_GUN = ['sfx_weapon_singleshot2.wav']
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
                   'health_up': 'health_pack.wav'}
 
-BOB_SPEED = 0.4
+
