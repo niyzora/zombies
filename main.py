@@ -152,6 +152,10 @@ class Game:
         # player hits items
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
+            if hit.type == 'shotgun':
+                hit.kill()
+                self.effects_sounds['gun_pickup'].play()
+                self.player.weapon = 'shotgun'
             if hit.type == 'health' and self.player.health < PLAYER_HEALTH:
                 hit.kill()
                 self.effects_sounds['health_up'].play()
@@ -166,6 +170,7 @@ class Game:
             if self.player.health <= 0:
                 self.playing = False
         if hits:
+            self.player.hit()
             self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
         # bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
