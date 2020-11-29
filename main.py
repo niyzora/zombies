@@ -62,13 +62,10 @@ class Game:
         img_folder = path.join(game_folder, 'img')
         snd_folder = path.join(game_folder, 'snd')
         music_folder = path.join(game_folder, 'music')
-        map_folder = path.join(game_folder, 'maps')
+        self.map_folder = path.join(game_folder, 'maps')
         self.title_font = path.join(img_folder, 'ZOMBIE.TTF')
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 180))
-        self.map = TiledMap(path.join(map_folder, 'level1.tmx'))
-        self.map_img = self.map.make_map()
-        self.map.rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
         self.bullet_images = {}
         self.bullet_images['lg'] = pg.image.load(path.join(img_folder, BULLET_IMG)).convert_alpha()
@@ -113,6 +110,9 @@ class Game:
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
+        self.map = TiledMap(path.join(self.map_folder, 'level1.tmx'))
+        self.map_img = self.map.make_map()
+        self.map.rect = self.map_img.get_rect()
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2,
                              tile_object.y + tile_object.height / 2)
