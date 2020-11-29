@@ -200,6 +200,7 @@ class Game:
         self.fog.fill(NIGHT_COLOR)
         self.light_rect.center = self.camera.apply(self.player).center
         self.fog.blit(self.light_mask, self.light_rect)
+        self.screen.blit(self.fog, (0,0), special_flags = pg.BLEND_MULT)
 
     def draw(self):
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
