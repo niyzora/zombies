@@ -1,7 +1,7 @@
 import pygame as pg
 vec = pg.math.Vector2
 
-# define some colors (R, G, B)
+# (R, G, B)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 DARKGREY = (40, 40, 40)
@@ -67,9 +67,9 @@ MUZZLE_FLASHES = ['whitePuff15.png', 'whitePuff16.png', 'whitePuff17.png',
 SPLAT = 'splat green.png'
 FLASH_DURATION = 50
 DAMAGE_ALPHA = [i for i in range(0, 255, 55)]
-NIGHT_COLOR = (20,20,20)
-LIGHT_RADIUS = (500,500)
-LIGHT_MASK = "light_350_med.png"
+NIGHT_COLOR = (20, 20, 20)
+LIGHT_RADIUS = (500, 500)
+LIGHT_MASK = "light_350_soft.png"
 
 # Layers
 WALL_LAYER = 1
@@ -88,6 +88,7 @@ BOB_SPEED = 0.3
 
 # Sounds
 BG_MUSIC = 'espionage.ogg'
+intro = 'intro.mp3'
 PLAYER_HIT_SOUNDS = ['pain/8.wav', 'pain/9.wav', 'pain/10.wav', 'pain/11.wav']
 ZOMBIE_MOAN_SOUNDS = ['brains2.wav', 'brains3.wav', 'zombie-roar-1.wav', 'zombie-roar-2.wav',
                       'zombie-roar-3.wav', 'zombie-roar-5.wav', 'zombie-roar-6.wav', 'zombie-roar-7.wav']

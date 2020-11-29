@@ -211,6 +211,7 @@ class MuzzleFlash(pg.sprite.Sprite):
         size = randint(20, 50)
         self.image = pg.transform.scale(choice(game.gun_flashes), (size, size))
         self.rect = self.image.get_rect()
+        self.hit_rect = PLAYER_HIT_RECT
         self.pos = pos
         self.rect.center = pos
         self.spawn_time = pg.time.get_ticks()
@@ -225,6 +226,7 @@ class Item(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.items
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.hit_rect = PLAYER_HIT_RECT
         self.image = game.item_images[type]
         self.rect = self.image.get_rect()
         self.type = type
@@ -235,6 +237,7 @@ class Item(pg.sprite.Sprite):
         self.dir = 1
 
     def update(self):
+        # bobbing motion
         offset = BOB_RANGE * (self.tween(self.step / BOB_RANGE) - 0.5)
         self.rect.centery = self.pos.y + offset * self.dir
         self.step += BOB_SPEED

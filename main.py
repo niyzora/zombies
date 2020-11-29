@@ -6,7 +6,7 @@ from settings import *
 from sprites import *
 from tilemap import *
 
-# HUD functions
+# Heads-up display functions
 def draw_player_health(surf, x, y, pct):
     if pct < 0:
         pct = 0
@@ -14,7 +14,7 @@ def draw_player_health(surf, x, y, pct):
     BAR_HEIGHT = 20
     fill = pct * BAR_LENGTH
     outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-    fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+    fill_rect = pg.Rect(x, y, int(fill), BAR_HEIGHT)
     if pct > 0.6:
         col = GREEN
     elif pct > 0.3:
@@ -33,28 +33,10 @@ class Game:
         self.clock = pg.time.Clock()
         self.load_data()
 
-    def draw_text(self, text, font_name, size, color, x, y, align="nw"):
+    def draw_text(self, text, font_name, size, color, x, y, align="topleft"):
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect()
-        if align == "nw":
-            text_rect.topleft = (x, y)
-        if align == "ne":
-            text_rect.topright = (x, y)
-        if align == "sw":
-            text_rect.bottomleft = (x, y)
-        if align == "se":
-            text_rect.bottomright = (x, y)
-        if align == "n":
-            text_rect.midtop = (x, y)
-        if align == "s":
-            text_rect.midbottom = (x, y)
-        if align == "e":
-            text_rect.midright = (x, y)
-        if align == "w":
-            text_rect.midleft = (x, y)
-        if align == "center":
-            text_rect.center = (x, y)
+        text_rect = text_surface.get_rect(**{align: (int(x), int(y))})
         self.screen.blit(text_surface, text_rect)
 
     def load_data(self):
@@ -80,6 +62,7 @@ class Game:
         self.item_images = {}
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(img_folder, ITEM_IMAGES[item])).convert_alpha()
+        # lighting effect
         self.fog = pg.Surface((WIDTH, HEIGHT))
         self.fog.fill(NIGHT_COLOR)
         self.light_mask = pg.image.load(path.join(img_folder, LIGHT_MASK)).convert_alpha()
@@ -110,7 +93,7 @@ class Game:
             self.zombie_hit_sounds.append(pg.mixer.Sound(path.join(snd_folder, snd)))
 
     def new(self):
-        # initialize all variables and do all the setup for a new game
+        # Init variables
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
@@ -134,11 +117,11 @@ class Game:
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
         self.paused = False
+        self.menu = True
         self.night = False
         self.effects_sounds['level_start'].play()
 
     def run(self):
-        # game loop - set self.playing = False to end the game
         self.playing = True
         pg.mixer.music.play(loops=-1)
         while self.playing:
@@ -153,10 +136,9 @@ class Game:
         sys.exit()
 
     def update(self):
-        # update portion of the game loop
+        # update game loop
         self.all_sprites.update()
         self.camera.update(self.player)
-        # game over?
         if len(self.mobs) == 0:
             self.playing = False
         # player hits items
@@ -185,7 +167,6 @@ class Game:
         # bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for mob in hits:
-            # hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
             for bullet in hits[mob]:
                 mob.health -= bullet.damage
             mob.vel = vec(0, 0)
@@ -197,50 +178,76 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
     def render_fog(self):
+        # draw the light mask fog image
         self.fog.fill(NIGHT_COLOR)
         self.light_rect.center = self.camera.apply(self.player).center
         self.fog.blit(self.light_mask, self.light_rect)
-        self.screen.blit(self.fog, (0,0), special_flags = pg.BLEND_MULT)
+        self.screen.blit(self.fog, (0, 0), special_flags=pg.BLEND_MULT)
 
     def draw(self):
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
-        # self.screen.fill(BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply(self.map))
-        # self.draw_grid()
         for sprite in self.all_sprites:
             if isinstance(sprite, Mob):
                 sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
-            if self.draw_debug:
-                pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(sprite.hit_rect), 1)
-        if self.draw_debug:
-            for wall in self.walls:
-                pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
 
-        # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
-        if self.night == True:
+        if self.night:
             self.render_fog()
-        # HUD functions
+        # Heads-up Display functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
         self.draw_text('Zombies: {}'.format(len(self.mobs)), self.hud_font, 30, WHITE,
-                       WIDTH - 10, 10, align="ne")
+                       WIDTH - 10, 10, align="topright")
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
-            self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2, align="center")
+            self.draw_text("Paused", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2 - 300, align="center")
+            self.draw_text("Keyboard settings", self.title_font, 65, RED, WIDTH / 2, HEIGHT/2 - 200, align="center")
+            self.draw_text("Move forward  W or", self.title_font, 55, RED, WIDTH / 2 - 50, HEIGHT / 2 - 100, align="center")
+            arrowup = pg.image.load('img/arrowup.png').convert_alpha()
+            arrowup = pg.transform.scale(arrowup, (100, 90))
+            self.screen.blit(arrowup, (WIDTH//2 + 250, HEIGHT//2 - 160))
+            self.draw_text("Move backward  S or", self.title_font, 55, RED, WIDTH / 2-50, HEIGHT / 2, align="center")
+            arrowdown = pg.image.load('img/arrowdown.png').convert_alpha()
+            arrowdown = pg.transform.scale(arrowdown, (100, 90))
+            self.screen.blit(arrowdown, (WIDTH//2 + 250, HEIGHT//2 - 60))
+            self.draw_text("Rotate clocwise D or", self.title_font, 55, RED, WIDTH / 2-50, HEIGHT / 2 + 100, align="center")
+            arrowright = pg.image.load('img/arrowright.png').convert_alpha()
+            arrowright = pg.transform.scale(arrowright, (90, 90))
+            self.screen.blit(arrowright, (WIDTH//2 + 255, HEIGHT//2 + 40))
+            self.draw_text("Rotate anticlockwise or", self.title_font, 48, RED, WIDTH / 2-50, HEIGHT / 2 + 200, align = "center")
+            arrowleft = pg.image.load('img/arrowleft.png').convert_alpha()
+            arrowleft = pg.transform.scale(arrowleft, (90, 90))
+            self.screen.blit(arrowleft, (WIDTH//2 + 255, HEIGHT//2 + 145))
+            self.draw_text("SHOOT - SPACE / NIGHT MODE - N / QUIT PAUSE MENU - P", self.title_font, 30, RED, WIDTH / 2 - 50, HEIGHT / 2 + 300, align="center")
+        elif self.menu:
+            self.screen.blit(self.dim_screen, (0, 0))
+            self.draw_text("START MENU", self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2 - 300, align="center")
+            self.draw_text("Roger Warner is exposed to test his survival skills", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2 - 100,
+                           align="center")
+            self.draw_text("Zombies are NOT a myth but a cruel REALITY", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2 - 50,
+                           align="center")
+            self.draw_text("His only refuge is his house where he is alone", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2,
+                           align="center")
+            self.draw_text("Help him to push back the attack and save his home.", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2 + 50,
+                           align="center")
+            self.draw_text("GOOD LUCK", self.title_font, 45, RED, WIDTH / 2, HEIGHT / 2 + 100, align="center")
+            self.draw_text("To skip the intro type BACKSPACE", self.title_font, 35, RED, WIDTH / 2, HEIGHT/2 + 250, align="center")
+            self.draw_text("For pause menu type P where you can see control panel", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2 + 200, align="center")
         pg.display.flip()
 
+
     def events(self):
-        # catch all events here
+        #event settings
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
-                if event.key == pg.K_h:
-                    self.draw_debug = not self.draw_debug
                 if event.key == pg.K_p:
                     self.paused = not self.paused
+                if event.key == pg.K_BACKSPACE:
+                    self.menu = not self.menu
                 if event.key == pg.K_n:
                     self.night = not self.night
 
@@ -267,8 +274,6 @@ class Game:
                     self.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
-
-# create the game object
 g = Game()
 g.show_start_screen()
 while True:
