@@ -118,7 +118,7 @@ class Game:
         self.draw_debug = False
         self.paused = False
         self.menu = True
-        self.night = False
+        self.night = True
         self.effects_sounds['level_start'].play()
 
     def run(self):
@@ -232,6 +232,8 @@ class Game:
                            align="center")
             self.draw_text("GOOD LUCK", self.title_font, 45, RED, WIDTH / 2, HEIGHT / 2 + 100, align="center")
             self.draw_text("To skip the intro type BACKSPACE", self.title_font, 35, RED, WIDTH / 2, HEIGHT/2 + 250, align="center")
+            self.draw_text("To turn off night mode type N", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2 + 300,
+                           align="center")
             self.draw_text("For pause menu type P where you can see control panel", self.title_font, 35, RED, WIDTH / 2, HEIGHT / 2 + 200, align="center")
         pg.display.flip()
 
