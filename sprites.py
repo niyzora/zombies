@@ -69,12 +69,13 @@ class Player(pg.sprite.Sprite):
             self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
-                Bullet(self.game, pos, dir.rotate(spread))
+                Bullet(self.game, pos, dir.rotate(spread), WEAPONS[self.weapon]['damage'])
                 snd = choice(self.game.weapon_sounds[self.weapon])
                 if snd.get_num_channels() > 2:
                     snd.stop()
                 snd.play()
             MuzzleFlash(self.game, pos)
+
     def hit(self):
         self.damaged = True
         self.damage_alpha = chain(DAMAGE_ALPHA * 4)
@@ -87,7 +88,7 @@ class Player(pg.sprite.Sprite):
             try:
                 self.image.fill((255, 255, 255, next(self.damage_alpha)), special_flags=pg.BLEND_RGBA_MULT)
             except:
-                self.damaged = False    
+                self.damaged = False
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
@@ -166,7 +167,7 @@ class Mob(pg.sprite.Sprite):
             pg.draw.rect(self.image, col, self.health_bar)
 
 class Bullet(pg.sprite.Sprite):
-    def __init__(self, game, pos, dir):
+    def __init__(self, game, pos, dir, damage):
         self._layer = BULLET_LAYER
         self.groups = game.all_sprites, game.bullets
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -177,9 +178,9 @@ class Bullet(pg.sprite.Sprite):
         self.pos = vec(pos)
         self.rect.center = pos
         #spread = uniform(-GUN_SPREAD, GUN_SPREAD)
-        self.vel = dir * WEAPONS[game.player.weapon]['bullet_speed'] * uniform(0.85, 1.1)
+        self.vel = dir * WEAPONS[game.player.weapon]['bullet_speed'] * uniform(0.9, 1.1)
         self.spawn_time = pg.time.get_ticks()
-        
+        self.damage = damage
 
     def update(self):
         self.pos += self.vel * self.game.dt
@@ -234,7 +235,6 @@ class Item(pg.sprite.Sprite):
         self.dir = 1
 
     def update(self):
-        # bobbing motion
         offset = BOB_RANGE * (self.tween(self.step / BOB_RANGE) - 0.5)
         self.rect.centery = self.pos.y + offset * self.dir
         self.step += BOB_SPEED
